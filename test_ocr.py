@@ -1,13 +1,9 @@
 import easyocr
-import numpy as np
-import cv2
-import random
-import matplotlib.pyplot as plt
-from PIL import ImageFont, ImageDraw, Image
+
 
 IMAGE_PATH = 'OCRtestImage.png'
 print("\nOCR로 인식된 내용리스트")
-reader = easyocr.Reader(['ko', 'en'])  # need to run only once to load model into memory
+reader = easyocr.Reader(['ko', 'en'], gpu=False)  # need to run only once to load model into memory
 result = reader.readtext(IMAGE_PATH, detail=0, paragraph=True)
 print(result)
 
@@ -28,17 +24,33 @@ for i in originalText:
     dotConvOriginal.append(dotFind)
 
 slicedOriginal = "".join(dotConvOriginal)
-
 slicedOriginal = slicedOriginal.split()
 print(slicedOriginal)
 
-print("\n OCR결과물 중 원본과의 불일치 요소 출력")
-difference = []
+print("\nOCR결과물 중 원본과의 불일치 요소 출력")
+differenceOCR = []
+differenceOriginal = []
 for i in slicedResult:
     if i not in slicedOriginal:
-        difference.append(i)
+        differenceOCR.append(i)
+for i in slicedOriginal:
+    if i not in slicedResult:
+        differenceOriginal.append(i)
+print("원본", differenceOriginal)
+print("추출본", differenceOCR)
 
-print(difference)
+print("\nOCR결과물과 원본의 예상 오차 비율")
+print("원본의 전체 음절 수: ", len(slicedOriginal))
+print("추출본의 전체 음절 수: ", len(slicedResult))
+
+originalString = "".join(originalText)
+incorrectString = "".join(differenceOriginal)
+print('원본 전체 어절 수: ', len(originalString))
+print('추출본과 불일치한 원본 전체 어절 수: ', len(incorrectString))
+
+matchRate = ((len(originalString)-len(incorrectString))/len(originalString))*100
+
+print("어절 단위 원본과 추출본의 일치율: ", matchRate, "%")
 
 """
 print("\nOCR 결과물 띄어쓰기 제거")
@@ -66,6 +78,13 @@ print(ocrString == originString)
 
 
 """
+from difflib import SequenceMatcher
+import numpy as np
+import cv2
+import random
+import matplotlib.pyplot as plt
+from PIL import ImageFont, ImageDraw, Image
+
 img = cv2.imread(IMAGE_PATH)
 
 img = Image.fromarray(img)
