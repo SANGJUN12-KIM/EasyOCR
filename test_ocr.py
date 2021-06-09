@@ -1,4 +1,6 @@
 import easyocr
+from difflib import SequenceMatcher
+from jamo import h2j, j2hcj
 
 
 IMAGE_PATH = 'OCRtestImage.png'
@@ -6,6 +8,7 @@ print("\nOCR로 인식된 내용리스트")
 reader = easyocr.Reader(['ko', 'en'], gpu=False)  # need to run only once to load model into memory
 result = reader.readtext(IMAGE_PATH, detail=0, paragraph=True)
 print(result)
+
 
 print("\n인식된 문장을 공백 단위로 슬라이싱")
 slicedResult = "".join(result)
@@ -39,6 +42,23 @@ for i in slicedOriginal:
 print("원본", differenceOriginal)
 print("추출본", differenceOCR)
 
+
+print("\nOCR결과물과 원본의 예상 오차 비율(공백 무시)")
+originalString = "".join(slicedOriginal)
+extractedString = "".join(slicedResult)
+
+print(SequenceMatcher(lambda  x: x==" ", originalString, extractedString).ratio())
+
+print("\nOCR결과물과 원본의 예상 오차 비율(자모 분리 후)")
+jamoOriginalString = j2hcj(h2j(originalString))
+jamoExtractedString = j2hcj(h2j(extractedString))
+
+print("자모 분리 원본", jamoOriginalString)
+print("자모 분리 추출본", jamoExtractedString)
+print('자모 분리 이후 SequenceMatcher: ', SequenceMatcher(lambda  x: x==" ", jamoOriginalString, jamoExtractedString).ratio())
+
+
+"""
 print("\nOCR결과물과 원본의 예상 오차 비율")
 print("원본의 전체 음절 수: ", len(slicedOriginal))
 print("추출본의 전체 음절 수: ", len(slicedResult))
@@ -51,6 +71,7 @@ print('추출본과 불일치한 원본 전체 어절 수: ', len(incorrectStrin
 matchRate = ((len(originalString)-len(incorrectString))/len(originalString))*100
 
 print("어절 단위 원본과 추출본의 일치율: ", matchRate, "%")
+"""
 
 """
 print("\nOCR 결과물 띄어쓰기 제거")
