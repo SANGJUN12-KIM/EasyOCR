@@ -31,7 +31,7 @@ def recognition_rate_check(extracted_detail0_list):
     print("OCR결과물과 원본의 예상 오차 비율(공백 무시): ", SequenceMatcher(lambda x: x == " ", originalString, extractedString).ratio())
 
 
-def json_file_creation(extracted_data_list):
+def create_json_file(extracted_data_list):
     file_data = OrderedDict()
     file_data['page'] = 1
     item_list = []
@@ -53,7 +53,4 @@ result = reader.readtext(IMAGE_PATH, paragraph=True)
 result_for_test = reader.readtext(IMAGE_PATH, detail=0, paragraph=True)
 
 recognition_rate_check(result_for_test)
-json_file_creation(result)
-
-
-
+create_json_file(result)
