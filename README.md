@@ -7,14 +7,14 @@
 ##run.py를 통한 현재 구현 기능
 
 1. 단일 페이지에 대한 OCR
-'''python
+```python
 IMAGE_PATH = 'OCRtestImage.png'
 reader = easyocr.Reader(['ko', 'en'], gpu=False)
 result = reader.readtext(IMAGE_PATH, paragraph=True)
-'''
+```
 
 2. 인식률 체크
-'''python
+```python
 def recognition_rate_check(extracted_detail0_list):
     #인식된 문장을 공백 단위로 슬라이싱
     slicedResult = "".join(extracted_detail0_list)
@@ -45,10 +45,10 @@ def recognition_rate_check(extracted_detail0_list):
 
 result_for_test = reader.readtext(IMAGE_PATH, detail=0, paragraph=True)
 recognition_rate_check(result_for_test)
-'''
+```
 
 3. 인식결과의 json화
-'''python
+```python
 def create_json_file(extracted_data_list):
     file_data = OrderedDict()
     file_data['page'] = 1
@@ -66,7 +66,7 @@ def create_json_file(extracted_data_list):
 
 
 create_json_file(result)
-'''
+```
 ***
 
 ##추후 추가/변경 예정 사항
