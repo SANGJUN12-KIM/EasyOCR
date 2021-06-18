@@ -1,4 +1,4 @@
-# EasyOCR for NIA-solution_for _social_ issue
+# EasyOCR for NIA-solution_for_social_issue
 ***
 * 원본 소스: <https://github.com/JaidedAI/EasyOCR>
 * 실행 코드: SANGJUN12-KIM/EasyOCR/run.py
