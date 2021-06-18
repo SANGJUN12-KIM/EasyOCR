@@ -4,7 +4,7 @@
 * 실행 코드: SANGJUN12-KIM/EasyOCR/run.py
 ***
 
-##run.py를 통한 현재 구현 기능
+## run.py를 통한 현재 구현 기능
 
 1. 단일 페이지에 대한 OCR
 ```python
@@ -69,7 +69,7 @@ create_json_file(result)
 ```
 ***
 
-##추후 추가/변경 예정 사항
+## 추후 추가/변경 예정 사항
 1. 인식률이 낮은 글꼴에 대한 학습
 2. 다수의 페이지에 대한 OCR 및 결과에 대한 json화
 
