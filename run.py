@@ -7,7 +7,7 @@ def recognition_rate_check(extracted_detail0_list):
     #인식된 문장을 공백 단위로 슬라이싱
     slicedResult = "".join(extracted_detail0_list)
     slicedResult = slicedResult.split()
-    print(slicedResult)
+    print("추출된 텍스트: \n", slicedResult)
 
     #원본을 공백 단위로 슬라이싱, 가운뎃점 제거"
     with open("OriginalTXT.txt", "r") as tf:
@@ -22,7 +22,7 @@ def recognition_rate_check(extracted_detail0_list):
 
     slicedOriginal = "".join(dotConvOriginal)
     slicedOriginal = slicedOriginal.split()
-    print(slicedOriginal)
+    print("인식률 비교를 위한 원본 텍스트: \n", slicedOriginal)
 
     #OCR결과물과 원본의 예상 오차 비율(공백 무시)
     originalString = "".join(slicedOriginal)
@@ -45,11 +45,22 @@ def create_json_file(extracted_data_list):
     with open('page_.json', 'w', encoding="utf-8") as make_file:
         json.dump(file_data, make_file, ensure_ascii=False, indent="\t")
 
-
 IMAGE_PATH = 'OCRtestImage.png'
+reader2 = easyocr.Reader(['ko'], gpu=False, model_storage_directory='./model',
+                    user_network_directory='./user_network',
+                    recog_network='custom')
+result2 = reader2.readtext(IMAGE_PATH, paragraph=True)
+result_for_test2 = reader2.readtext(IMAGE_PATH, detail=0, paragraph=True)
+
+recognition_rate_check(result_for_test2)
+create_json_file(result2)
+
+
 reader = easyocr.Reader(['ko', 'en'], gpu=False)
 result = reader.readtext(IMAGE_PATH, paragraph=True)
 result_for_test = reader.readtext(IMAGE_PATH, detail=0, paragraph=True)
 
 recognition_rate_check(result_for_test)
 create_json_file(result)
+
+
