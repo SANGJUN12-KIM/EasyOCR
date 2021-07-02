@@ -1,5 +1,6 @@
 import easyocr
 import json
+import time
 from difflib import SequenceMatcher
 from collections import OrderedDict
 
@@ -45,22 +46,27 @@ def create_json_file(extracted_data_list):
     with open('page_.json', 'w', encoding="utf-8") as make_file:
         json.dump(file_data, make_file, ensure_ascii=False, indent="\t")
 
-IMAGE_PATH = 'OCRtestImage.png'
-reader2 = easyocr.Reader(['ko'], gpu=False, model_storage_directory='./model',
-                    user_network_directory='./user_network',
-                    recog_network='custom')
-result2 = reader2.readtext(IMAGE_PATH, paragraph=True)
-result_for_test2 = reader2.readtext(IMAGE_PATH, detail=0, paragraph=True)
+start = time.time()
 
-recognition_rate_check(result_for_test2)
-create_json_file(result2)
+IMAGE_PATH = './OCRtestImage.png'
 
 
-reader = easyocr.Reader(['ko', 'en'], gpu=False)
+reader = easyocr.Reader(['en', 'ko'], gpu=False)
 result = reader.readtext(IMAGE_PATH, paragraph=True)
 result_for_test = reader.readtext(IMAGE_PATH, detail=0, paragraph=True)
+recognition_rate_check(result_for_test)
+create_json_file(result)
+print("수행시간 :", time.time() - start, "초\n\n")
 
+print("학습모델 적용")
+start = time.time()
+
+reader = easyocr.Reader(['ko'], gpu=False, model_storage_directory='user_network',
+                        user_network_directory='user_network', recog_network='custom')
+result = reader.readtext(IMAGE_PATH, paragraph=True)
+result_for_test = reader.readtext(IMAGE_PATH, detail=0, paragraph=True)
 recognition_rate_check(result_for_test)
 create_json_file(result)
 
+print("수행시간 :", time.time() - start, "초")
 
