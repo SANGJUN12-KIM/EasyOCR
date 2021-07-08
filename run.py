@@ -26,7 +26,7 @@ def recognition_rate_check(extracted_detail0_list):
 
     slicedOriginal = "".join(dotConvOriginal)
     slicedOriginal = slicedOriginal.split()
-    print("인식률 비교를 위한 원본 텍스트: \n", slicedOriginal)
+    #print("인식률 비교를 위한 원본 텍스트: \n", slicedOriginal)
 
     #OCR결과물과 원본의 예상 오차 비율(공백 무시)
     originalString = "".join(slicedOriginal)
@@ -34,7 +34,7 @@ def recognition_rate_check(extracted_detail0_list):
 
     print("\nSequenceMatcher를 통한 어절단위 일치도: ", SequenceMatcher(lambda x: x == " ", originalString, extractedString).ratio())
 
-    print("\n어절 단위 OCR결과물 중 원본과의 불일치 요소 출력")
+    #print("\n어절 단위 OCR결과물 중 원본과의 불일치 요소 출력")
     differenceOCR = []
     differenceOriginal = []
     for i in slicedResult:
@@ -43,13 +43,13 @@ def recognition_rate_check(extracted_detail0_list):
     for i in slicedOriginal:
         if i not in slicedResult:
             differenceOriginal.append(i)
-    print("원본", differenceOriginal)
-    print("추출본", differenceOCR)
+    #print("원본", differenceOriginal)
+    #print("추출본", differenceOCR)
 
-    print("원본의 전체 어절 수: ", len(slicedOriginal))
-    print("추출본의 전체 어절 수: ", len(slicedResult))
+    #print("원본의 전체 어절 수: ", len(slicedOriginal))
+    #print("추출본의 전체 어절 수: ", len(slicedResult))
 
-    print("\n어절 단위 OCR결과물 중 원본과의 불일치 요소 출력")
+    #print("\n어절 단위 OCR결과물 중 원본과의 불일치 요소 출력")
     syllableOriginalString = "".join(differenceOriginal)
     syllableExtractedString = "".join(differenceOCR)
 
@@ -65,19 +65,19 @@ def recognition_rate_check(extracted_detail0_list):
     for i in syllableOriginalString:
         if i in syllableExtractedString:
             syllableCorrectOCR.append(i)
-    print('음절 단위 일치요소: ', syllableCorrectOCR)
-    print('\n원본 전체 음절 수(originalString): ', len(originalString))
-    print('추출본 전체 음절 수(extractedString):', len(extractedString))
-    print('\n원본 음절 단위 불일치 요소:', syllableDifferenceOriginal)
-    print('추출본 음절 단위 불일치 요소', syllableDifferenceOCR)
+    #print('음절 단위 일치요소: ', syllableCorrectOCR)
+    #print('\n원본 전체 음절 수(originalString): ', len(originalString))
+    #print('추출본 전체 음절 수(extractedString):', len(extractedString))
+    #print('\n원본 음절 단위 불일치 요소:', syllableDifferenceOriginal)
+    #print('추출본 음절 단위 불일치 요소', syllableDifferenceOCR)
 
     syllableRecall = (len(syllableCorrectOCR)/len(syllableOriginalString)) * 100
     syllablePrecision = (len(syllableCorrectOCR)/len(syllableExtractedString)) * 100
 
     print("\n음절 단위 recall: ", syllableRecall, "%")
-    print("음절 단위 precision: ", syllablePrecision, "%\n")
+    print("음절 단위 precision: ", syllablePrecision, "%")
 
-    print("\n음소 단위 OCR결과물 중 원본과의 불일치 요소 출력")
+    #print("\n음소 단위 OCR결과물 중 원본과의 불일치 요소 출력")
     phonemeOriginalString = j2hcj(h2j(syllableOriginalString))
     phonemeExtractedString = j2hcj(h2j(syllableExtractedString))
 
@@ -94,9 +94,9 @@ def recognition_rate_check(extracted_detail0_list):
         if i in phonemeExtractedString:
             phonemeCorrectOCR.append(i)
 
-    print('음소 단위 일치요소: ', phonemeCorrectOCR)
-    print('원본 음소 단위 불일치 요소:', phonemeDifferenceOriginal)
-    print('추출본 음소 단위 불일치 요소', phonemeDifferenceOCR)
+    #print('음소 단위 일치요소: ', phonemeCorrectOCR)
+    #print('원본 음소 단위 불일치 요소:', phonemeDifferenceOriginal)
+    #print('추출본 음소 단위 불일치 요소', phonemeDifferenceOCR)
 
     phonemeRecall = (len(phonemeCorrectOCR) / len(phonemeOriginalString)) * 100
     phonemePrecision = (len(phonemeCorrectOCR) / len(phonemeExtractedString)) * 100
@@ -134,7 +134,7 @@ for image_file in os.listdir('./testpages/'):
     start = time.time()
 
     IMAGE_PATH = './testpages/'+ image_file
-    print("파일 명: ", IMAGE_PATH)
+    print("\n\n파일 명: ", IMAGE_PATH)
 
     reader = easyocr.Reader(['en', 'ko'], gpu=False)
     result = reader.readtext(IMAGE_PATH, paragraph=True)
@@ -152,21 +152,6 @@ for image_file in os.listdir('./testpages/'):
     result = reader.readtext(IMAGE_PATH, paragraph=True)
     result_for_test = reader.readtext(IMAGE_PATH, detail=0, paragraph=True)
     recognition_rate_check(result_for_test)
-    create_json_file(result)
+    create_json_file(result, image_file)
 
     print("수행시간 :", time.time() - start, "초")
-
-
-"""
-print("학습모델 적용")
-start = time.time()
-
-reader = easyocr.Reader(['ko'], gpu=False, model_storage_directory='user_network',
-                        user_network_directory='user_network', recog_network='custom')
-result = reader.readtext(IMAGE_PATH, paragraph=True)
-result_for_test = reader.readtext(IMAGE_PATH, detail=0, paragraph=True)
-recognition_rate_check(result_for_test)
-create_json_file(result)
-
-print("수행시간 :", time.time() - start, "초")
-"""
