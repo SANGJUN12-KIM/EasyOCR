@@ -7,8 +7,9 @@
 ## run.py를 통한 현재 구현 기능
 
 1. 단일 페이지에 대한 OCR
+
 ```python
-IMAGE_PATH = 'OCRtestImage.png'
+IMAGE_PATH = '1OCRtestImage.png'
 reader = easyocr.Reader(['ko', 'en'], gpu=False)
 result = reader.readtext(IMAGE_PATH, paragraph=True)
 ```

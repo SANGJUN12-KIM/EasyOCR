@@ -1,9 +1,11 @@
 import easyocr
 import json
 import time
+import os
 from difflib import SequenceMatcher
 from collections import OrderedDict
 from jamo import h2j, j2hcj
+from os.path import join
 
 def recognition_rate_check(extracted_detail0_list):
     #인식된 문장을 공백 단위로 슬라이싱
@@ -30,7 +32,7 @@ def recognition_rate_check(extracted_detail0_list):
     originalString = "".join(slicedOriginal)
     extractedString = "".join(slicedResult)
 
-    print("\nSequenceMatcher를 통한 음절단위 일치도: ", SequenceMatcher(lambda x: x == " ", originalString, extractedString).ratio())
+    print("\nSequenceMatcher를 통한 어절단위 일치도: ", SequenceMatcher(lambda x: x == " ", originalString, extractedString).ratio())
 
     print("\n어절 단위 OCR결과물 중 원본과의 불일치 요소 출력")
     differenceOCR = []
@@ -103,9 +105,8 @@ def recognition_rate_check(extracted_detail0_list):
     print("음소 단위 precision: ", phonemePrecision, "%")
 
 
-
-
-def create_json_file(extracted_data_list):
+def create_json_file(extracted_data_list, image_name):
+    file_name = image_name
     file_data = OrderedDict()
     file_data['page'] = 1
     item_list = []
@@ -117,21 +118,46 @@ def create_json_file(extracted_data_list):
         item['content'] = text
         item_list.append(item)
     file_data['object'] = item_list
-    with open('page_.json', 'w', encoding="utf-8") as make_file:
+
+    root_dir = join('./', 'OCRresults')
+    if os.path.isdir(root_dir) == False:
+        os.mkdir(root_dir)
+    os.chdir(root_dir)
+    with open(file_name + '.json', 'w', encoding="utf-8") as make_file:
         json.dump(file_data, make_file, ensure_ascii=False, indent="\t")
-
-start = time.time()
-
-IMAGE_PATH = './OCRtestImage.png'
+    os.chdir(os.path.join(os.pardir))
 
 
-reader = easyocr.Reader(['en', 'ko'], gpu=False)
-result = reader.readtext(IMAGE_PATH, paragraph=True)
-result_for_test = reader.readtext(IMAGE_PATH, detail=0, paragraph=True)
-recognition_rate_check(result_for_test)
-create_json_file(result)
-print("수행시간 :", time.time() - start, "초\n\n")
+#IMAGE_PATH = 'testpages/[바탕체]OCRtestImage.png'
 
+for image_file in os.listdir('./testpages/'):
+    start = time.time()
+
+    IMAGE_PATH = './testpages/'+ image_file
+    print("파일 명: ", IMAGE_PATH)
+
+    reader = easyocr.Reader(['en', 'ko'], gpu=False)
+    result = reader.readtext(IMAGE_PATH, paragraph=True)
+    result_for_test = reader.readtext(IMAGE_PATH, detail=0, paragraph=True)
+    print(result_for_test)
+    recognition_rate_check(result_for_test)
+    create_json_file(result, image_file)
+    print("수행시간 :", time.time() - start, "초\n\n")
+    
+    print("학습모델 적용")
+    start = time.time()
+
+    reader = easyocr.Reader(['ko'], gpu=False, model_storage_directory='user_network',
+                        user_network_directory='user_network', recog_network='custom')
+    result = reader.readtext(IMAGE_PATH, paragraph=True)
+    result_for_test = reader.readtext(IMAGE_PATH, detail=0, paragraph=True)
+    recognition_rate_check(result_for_test)
+    create_json_file(result)
+
+    print("수행시간 :", time.time() - start, "초")
+
+
+"""
 print("학습모델 적용")
 start = time.time()
 
@@ -143,4 +169,4 @@ recognition_rate_check(result_for_test)
 create_json_file(result)
 
 print("수행시간 :", time.time() - start, "초")
-
+"""
