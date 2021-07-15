@@ -40,3 +40,4 @@ def image2text(image_path = './target_pages/', custom_model = 'False', create_js
 
 if __name__ == '__main__':
     image2text()
+    image2text(custom_model='True', create_json='False')
