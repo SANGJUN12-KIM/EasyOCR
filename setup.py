@@ -9,7 +9,7 @@ with open('requirements.txt', encoding="utf-8-sig") as f:
     requirements = f.readlines()
 
 def readme():
-    with open('README.md', encoding="utf-8-sig") as f:
+    with open('READMEoriginal.md', encoding="utf-8-sig") as f:
         README = f.read()
     return README
 
